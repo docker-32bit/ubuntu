@@ -6,7 +6,7 @@ arch=i386
 suite=trusty
 chroot_dir='/var/chroot/trusty'
 apt_mirror='http://archive.ubuntu.com/ubuntu'
-docker_image='32bit/ubuntu:14.04'
+docker_image='32bit/ubuntu-14.04'
 
 ### make sure that the required tools are installed
 apt-get install -y docker.io debootstrap dchroot
