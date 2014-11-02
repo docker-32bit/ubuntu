@@ -17,11 +17,11 @@ debootstrap --variant=minbase --arch=$arch $suite $chroot_dir $apt_mirror
 
 ### update the list of package sources
 cat <<EOF > $chroot_dir/etc/apt/sources.list
-deb $apt_mirror trusty main restricted universe multiverse
-deb $apt_mirror trusty-updates main restricted universe multiverse
-deb $apt_mirror trusty-backports main restricted universe multiverse
-deb http://security.ubuntu.com/ubuntu trusty-security main restricted universe multiverse
-deb http://extras.ubuntu.com/ubuntu trusty main
+deb $apt_mirror $suite main restricted universe multiverse
+deb $apt_mirror $suite-updates main restricted universe multiverse
+deb $apt_mirror $suite-backports main restricted universe multiverse
+deb http://security.ubuntu.com/ubuntu $suite-security main restricted universe multiverse
+deb http://extras.ubuntu.com/ubuntu $suite main
 EOF
 
 ### install ubuntu-minimal
