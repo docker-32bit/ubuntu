@@ -3,10 +3,10 @@
 
 ### settings
 arch=i386
-suite=trusty
-chroot_dir='/var/chroot/trusty'
+suite=${1:-trusty}
+chroot_dir="/var/chroot/$suite"
 apt_mirror='http://archive.ubuntu.com/ubuntu'
-docker_image='32bit/ubuntu:14.04'
+docker_image="32bit/ubuntu:${1:-14.04}"
 
 ### make sure that the required tools are installed
 apt-get install -y docker.io debootstrap dchroot
@@ -28,6 +28,7 @@ EOF
 cp /etc/resolv.conf $chroot_dir/etc/resolv.conf
 mount -o bind /proc $chroot_dir/proc
 chroot $chroot_dir apt-get update
+chroot $chroot_dir apt-get -y upgrade
 chroot $chroot_dir apt-get -y install ubuntu-minimal
 
 ### cleanup and unmount /proc
@@ -46,6 +47,6 @@ cat ubuntu.tgz | docker import - $docker_image
 # ### push image to Docker Hub
 # docker push $docker_image
 
-# ### cleanup
-# rm ubuntu.tgz
-# rm -rf $chroot_dir
+### cleanup
+rm ubuntu.tgz
+rm -rf $chroot_dir
