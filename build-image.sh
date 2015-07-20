@@ -9,7 +9,9 @@ apt_mirror='http://archive.ubuntu.com/ubuntu'
 docker_image="32bit/ubuntu:${1:-14.04}"
 
 ### make sure that the required tools are installed
-apt-get install -y docker.io debootstrap dchroot
+packages="debootstrap dchroot"
+which docker || packages="$packages docker.io"
+apt-get install -y $packages
 
 ### install a minbase system with debootstrap
 export DEBIAN_FRONTEND=noninteractive
