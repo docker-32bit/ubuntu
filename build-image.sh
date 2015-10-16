@@ -33,11 +33,17 @@ chroot $chroot_dir apt-get update
 chroot $chroot_dir apt-get -y upgrade
 chroot $chroot_dir apt-get -y install ubuntu-minimal
 
-### cleanup and unmount /proc
+### cleanup
 chroot $chroot_dir apt-get autoclean
 chroot $chroot_dir apt-get clean
 chroot $chroot_dir apt-get autoremove
 rm $chroot_dir/etc/resolv.conf
+
+### kill any processes that are running on chroot
+chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
+test -z "$chroot_pids" || (kill -9 $chroot_pids; sleep 2)
+
+### unmount /proc
 umount $chroot_dir/proc
 
 ### create a tar archive from the chroot directory
