@@ -9,7 +9,7 @@ apt_mirror='http://archive.ubuntu.com/ubuntu'
 docker_image="32bit/ubuntu:${1:-14.04}"
 
 ### make sure that the required tools are installed
-packages="debootstrap dchroot"
+packages="debootstrap dchroot apparmor"
 which docker || packages="$packages docker.io"
 apt-get install -y $packages
 
