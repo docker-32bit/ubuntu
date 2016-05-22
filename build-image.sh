@@ -18,6 +18,7 @@ function unmount_system_folders() {
   ### disable immediate failure (while loop handles error case):
   set +e
 
+  local safeguard=3
   while [ $(mount | grep -c $chroot_dir) -gt 0 ]; do
     ### kill any processes that are running on chroot
     chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
@@ -29,6 +30,12 @@ function unmount_system_folders() {
     umount $chroot_dir/sys
     umount $chroot_dir/proc
     sleep 2
+
+    safeguard=$[$safeguard-1]
+    if [ $safeguard -eq 0 ]; then
+      echo "Could not unmount drives; please clean up manually."
+      exit 1
+    fi
   done
 
   ### uncritical, and unlikely to fail, hence no -f:
