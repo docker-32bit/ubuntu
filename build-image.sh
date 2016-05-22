@@ -43,6 +43,7 @@ function remove_chroot_dir() {
 }
 
 function on_exit() {
+  trap '' EXIT
   unmount_system_folders
   remove_chroot_dir
 }
