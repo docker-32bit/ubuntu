@@ -1,16 +1,27 @@
 #!/bin/bash -ex
 ### Build a docker image for ubuntu i386.
 
+function kill_safely() {
+  kill $*
+  sleep 2
+  kill -9 $*
+}
+
 function unmount_system_folders() {
   do_unmount="no"
 
   ### kill any processes that are running on chroot
   chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
-  test -z "$chroot_pids" || (kill -9 $chroot_pids; sleep 2)
+  if ! [ -z "$chroot_pids" ]; then
+    kill_safely $chroot_pids
+  fi
 
-  umount $chroot_dir/dev
-  umount $chroot_dir/sys
-  umount $chroot_dir/proc
+  while [ $(mount | grep -c $chroot_dir) -gt 0 ]; do
+    umount $chroot_dir/dev
+    umount $chroot_dir/sys
+    umount $chroot_dir/proc
+    sleep 2
+  done
   rm $chroot_dir/etc/resolv.conf
 }
 
