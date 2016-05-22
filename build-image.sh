@@ -15,6 +15,9 @@ function kill_safely() {
 }
 
 function unmount_system_folders() {
+  ### disable immediate failure (while loop handles error case):
+  set +e
+
   while [ $(mount | grep -c $chroot_dir) -gt 0 ]; do
     ### kill any processes that are running on chroot
     chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
@@ -27,17 +30,19 @@ function unmount_system_folders() {
     umount $chroot_dir/proc
     sleep 2
   done
+
+  ### uncritical, and unlikely to fail, hence no -f:
   rm $chroot_dir/etc/resolv.conf
+
+  set -e
 }
 
 function remove_chroot_dir() {
-  rm ubuntu.tgz
+  rm -f ubuntu.tgz
   rm -rf $chroot_dir
 }
 
 function on_exit() {
-  set +e
-
   unmount_system_folders
   remove_chroot_dir
 }
