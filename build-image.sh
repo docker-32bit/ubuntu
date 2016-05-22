@@ -26,7 +26,6 @@ function unmount_system_folders() {
       kill_safely $chroot_pids
     fi
 
-    umount $chroot_dir/dev
     umount $chroot_dir/sys
     umount $chroot_dir/proc
     sleep 2
@@ -78,11 +77,8 @@ EOF
 
 ### install ubuntu-minimal
 cp /etc/resolv.conf $chroot_dir/etc/resolv.conf
-mount -o bind /proc $chroot_dir/proc
-mount --rbind /sys $chroot_dir/sys
-mount --make-rslave $chroot_dir/sys
-mount --rbind /dev $chroot_dir/dev
-mount --make-rslave $chroot_dir/dev
+mount --bind /proc $chroot_dir/proc
+mount --bind /sys $chroot_dir/sys
 chroot $chroot_dir apt-get update
 chroot $chroot_dir apt-get -y upgrade
 chroot $chroot_dir apt-get -y install ubuntu-minimal
