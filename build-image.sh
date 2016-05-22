@@ -17,13 +17,13 @@ function kill_safely() {
 function unmount_system_folders() {
   do_unmount="no"
 
-  ### kill any processes that are running on chroot
-  chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
-  if ! [ -z "$chroot_pids" ]; then
-    kill_safely $chroot_pids
-  fi
-
   while [ $(mount | grep -c $chroot_dir) -gt 0 ]; do
+    ### kill any processes that are running on chroot
+    chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
+    if ! [ -z "$chroot_pids" ]; then
+      kill_safely $chroot_pids
+    fi
+
     umount $chroot_dir/dev
     umount $chroot_dir/sys
     umount $chroot_dir/proc
