@@ -1,6 +1,13 @@
 #!/bin/bash -ex
 ### Build a docker image for ubuntu i386.
 
+### settings
+arch=i386
+suite=${1:-trusty}
+chroot_dir="/var/chroot/$suite"
+apt_mirror='http://archive.ubuntu.com/ubuntu'
+docker_image="32bit/ubuntu:${1:-14.04}"
+
 function kill_safely() {
   kill $*
   sleep 2
@@ -42,13 +49,6 @@ function on_exit() {
     remove_chroot_dir
   fi
 }
-
-### settings
-arch=i386
-suite=${1:-trusty}
-chroot_dir="/var/chroot/$suite"
-apt_mirror='http://archive.ubuntu.com/ubuntu'
-docker_image="32bit/ubuntu:${1:-14.04}"
 
 ### setup exit hook
 do_unmount="yes"
