@@ -15,8 +15,6 @@ function kill_safely() {
 }
 
 function unmount_system_folders() {
-  do_unmount="no"
-
   while [ $(mount | grep -c $chroot_dir) -gt 0 ]; do
     ### kill any processes that are running on chroot
     chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
@@ -33,7 +31,6 @@ function unmount_system_folders() {
 }
 
 function remove_chroot_dir() {
-  do_cleanup="no"
   rm ubuntu.tgz
   rm -rf $chroot_dir
 }
@@ -41,18 +38,11 @@ function remove_chroot_dir() {
 function on_exit() {
   set +e
 
-  if [ "$do_unmount" = "yes" ]; then
-    unmount_system_folders
-  fi
-
-  if [ "$do_cleanup" = "yes" ]; then
-    remove_chroot_dir
-  fi
+  unmount_system_folders
+  remove_chroot_dir
 }
 
 ### setup exit hook
-do_unmount="yes"
-do_cleanup="yes"
 trap on_exit EXIT
 
 ### make sure that the required tools are installed
