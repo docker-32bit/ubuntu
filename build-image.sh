@@ -97,7 +97,7 @@ unmount_system_folders
 tar cfz ubuntu.tgz -C $chroot_dir .
 
 ### import this tar archive into a docker image:
-# cat ubuntu.tgz | docker import - $docker_image
+cat ubuntu.tgz | docker import - $docker_image
 
 # ### push image to Docker Hub
 # docker push $docker_image
