@@ -1,12 +1,48 @@
 #!/bin/bash -ex
 ### Build a docker image for ubuntu i386.
 
+function unmount_system_folders() {
+  do_unmount="no"
+
+  ### kill any processes that are running on chroot
+  chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
+  test -z "$chroot_pids" || (kill -9 $chroot_pids; sleep 2)
+
+  umount $chroot_dir/dev
+  umount $chroot_dir/sys
+  umount $chroot_dir/proc
+  rm $chroot_dir/etc/resolv.conf
+}
+
+function remove_chroot_dir() {
+  do_cleanup="no"
+  rm ubuntu.tgz
+  rm -rf $chroot_dir
+}
+
+function on_exit() {
+  set +e
+
+  if [ "$do_unmount" = "yes" ]; then
+    unmount_system_folders
+  fi
+
+  if [ "$do_cleanup" = "yes" ]; then
+    remove_chroot_dir
+  fi
+}
+
 ### settings
 arch=i386
 suite=${1:-trusty}
 chroot_dir="/var/chroot/$suite"
 apt_mirror='http://archive.ubuntu.com/ubuntu'
 docker_image="32bit/ubuntu:${1:-14.04}"
+
+### setup exit hook
+do_unmount="yes"
+do_cleanup="yes"
+trap on_exit EXIT
 
 ### make sure that the required tools are installed
 packages="debootstrap dchroot apparmor"
@@ -29,6 +65,10 @@ EOF
 ### install ubuntu-minimal
 cp /etc/resolv.conf $chroot_dir/etc/resolv.conf
 mount -o bind /proc $chroot_dir/proc
+mount --rbind /sys $chroot_dir/sys
+mount --make-rslave $chroot_dir/sys
+mount --rbind /dev $chroot_dir/dev
+mount --make-rslave $chroot_dir/dev
 chroot $chroot_dir apt-get update
 chroot $chroot_dir apt-get -y upgrade
 chroot $chroot_dir apt-get -y install ubuntu-minimal
@@ -37,24 +77,13 @@ chroot $chroot_dir apt-get -y install ubuntu-minimal
 chroot $chroot_dir apt-get autoclean
 chroot $chroot_dir apt-get clean
 chroot $chroot_dir apt-get autoremove
-rm $chroot_dir/etc/resolv.conf
-
-### kill any processes that are running on chroot
-chroot_pids=$(for p in /proc/*/root; do ls -l $p; done | grep $chroot_dir | cut -d'/' -f3)
-test -z "$chroot_pids" || (kill -9 $chroot_pids; sleep 2)
-
-### unmount /proc
-umount $chroot_dir/proc
+unmount_system_folders
 
 ### create a tar archive from the chroot directory
 tar cfz ubuntu.tgz -C $chroot_dir .
 
 ### import this tar archive into a docker image:
-cat ubuntu.tgz | docker import - $docker_image
+# cat ubuntu.tgz | docker import - $docker_image
 
 # ### push image to Docker Hub
 # docker push $docker_image
-
-### cleanup
-rm ubuntu.tgz
-rm -rf $chroot_dir
