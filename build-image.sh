@@ -3,10 +3,10 @@
 
 ### settings
 arch=i386
-suite=${1:-trusty}
+suite=${1:-xenial}
 chroot_dir="/var/chroot/$suite"
 apt_mirror='http://archive.ubuntu.com/ubuntu'
-docker_image="32bit/ubuntu:${1:-14.04}"
+docker_image="32bit/ubuntu:${1:-16.04}"
 
 ### make sure that the required tools are installed
 packages="debootstrap dchroot apparmor"
@@ -23,7 +23,7 @@ deb $apt_mirror $suite main restricted universe multiverse
 deb $apt_mirror $suite-updates main restricted universe multiverse
 deb $apt_mirror $suite-backports main restricted universe multiverse
 deb http://security.ubuntu.com/ubuntu $suite-security main restricted universe multiverse
-deb http://extras.ubuntu.com/ubuntu $suite main
+deb http://archive.ubuntu.com/ubuntu $suite main
 EOF
 
 ### install ubuntu-minimal
