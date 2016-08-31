@@ -3,10 +3,10 @@
 
 ### settings
 arch=i386
-suite=${1:-xenial}
+suite=xenial
 chroot_dir="/var/chroot/$suite"
 apt_mirror='http://archive.ubuntu.com/ubuntu'
-docker_image="32bit/ubuntu:${1:-16.04}"
+docker_image="32bit/ubuntu:$suite"
 
 ### make sure that the required tools are installed
 packages="debootstrap dchroot apparmor"
