@@ -50,7 +50,7 @@ umount $chroot_dir/proc
 tar cfz ubuntu.tgz -C $chroot_dir .
 
 ### import this tar archive into a docker image:
-cat ubuntu.tgz | docker import - $docker_image
+cat ubuntu.tgz | docker import - $docker_image --message "Build with https://github.com/docker-32bit/ubuntu"
 
 # ### push image to Docker Hub
 # docker push $docker_image
