@@ -9,7 +9,7 @@ apt_mirror='http://archive.ubuntu.com/ubuntu'
 docker_image="32bit/ubuntu:$suite"
 
 ### make sure that the required tools are installed
-packages="debootstrap dchroot apparmor"
+packages="debootstrap schroot apparmor"
 which docker || packages="$packages docker.io"
 apt-get install -y $packages
 
