@@ -23,7 +23,6 @@ deb $apt_mirror $suite main restricted universe multiverse
 deb $apt_mirror $suite-updates main restricted universe multiverse
 deb $apt_mirror $suite-backports main restricted universe multiverse
 deb http://security.ubuntu.com/ubuntu $suite-security main restricted universe multiverse
-deb http://archive.ubuntu.com/ubuntu $suite main
 EOF
 
 ### install ubuntu-minimal
