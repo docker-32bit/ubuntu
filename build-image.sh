@@ -3,7 +3,7 @@
 
 ### settings
 arch=i386
-suite=xenial
+suite=${1:-bionic}
 chroot_dir="/var/chroot/$suite"
 apt_mirror='http://archive.ubuntu.com/ubuntu'
 docker_image="32bit/ubuntu:$suite"
